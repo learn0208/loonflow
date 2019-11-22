@@ -1,0 +1,48 @@
+version: '3.1'
+
+services:
+  db-mysql:
+    image: mysql:5.7
+    container_name: db-mysql
+    restart: always
+    volumes:
+      - /data/loonflow/mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: a1b2c3d4
+      MYSQL_DATABASE: loonflownew
+      MYSQL_USER: loonflownew
+      MYSQL_PASSWORD: 123456
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      - loonflow
+
+  db-redis:
+    image: redis:5
+    container_name: db-redis
+    restart: always
+    volumes:
+      - /data/loonflow/redis:/data
+    command: redis-server /data/redis.conf
+    networks:
+      - loonflow
+
+  loonflow:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    container_name: loonflow
+    restart: always
+    ports:
+      - 8000:8000
+    depends_on:
+      - db-mysql
+      - db-redis
+    networks:
+      - loonflow
+
+networks:
+  loonflow:
+    external: false
+    ipam:
+      config:
+        - subnet: 172.88.2.0/24
