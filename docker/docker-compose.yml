@@ -32,6 +32,8 @@ services:
       dockerfile: docker/Dockerfile
     container_name: loonflow
     restart: always
+    sysctls:
+      net.core.somaxconn: 1024
     ports:
       - 8000:8000
     depends_on:

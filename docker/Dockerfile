@@ -14,8 +14,10 @@ COPY /requirements ./requirements
 
 RUN pip install --no-cache-dir -r requirements/common.txt
 
+RUN pip install uwsgi
+
 COPY . .
 
 ENTRYPOINT ["/usr/src/app/docker/docker-entrypoint.sh"]
 
-CMD [ "python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD [ "uwsgi", "--ini", "uwsgi.ini" ]
